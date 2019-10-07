@@ -1,4 +1,4 @@
-module github.com/ebauman/rancher-namespace-watcher
+module github.com/ebauman/rancher-project-mapper
 
 go 1.13
 
