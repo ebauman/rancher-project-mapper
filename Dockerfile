@@ -1,4 +1,7 @@
 FROM scratch
 
-COPY rancher-namespace-watcher /
-CMD ["/rancher-namespace-watcher", "--tls-cert-file", "tls.crt", "--tls-private-key-file", "tls.key"]
+COPY rancher-project-mapper /
+
+EXPOSE 443
+
+CMD ["/rancher-project-mapper", "--tls-cert-file", "tls.crt", "--tls-private-key-file", "tls.key"]
