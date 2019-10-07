@@ -4,4 +4,4 @@ COPY rancher-project-mapper /
 
 EXPOSE 443
 
-CMD ["/rancher-project-mapper", "--tls-cert-file", "tls.crt", "--tls-private-key-file", "tls.key"]
+CMD ["/rancher-project-mapper", "--tls-cert-file", "/certs/tls.crt", "--tls-private-key-file", "/certs/tls.key"]
