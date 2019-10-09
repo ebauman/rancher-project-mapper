@@ -1,5 +1,5 @@
 apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
+kind: ClusterRoleBinding
 metadata:
   name: {{ include "rancher-project-mapper.fullname" . }}
   namespace: cattle-system
@@ -8,6 +8,6 @@ subjects:
     name: {{ include "rancher-project-mapper.fullname" . }}
     namespace: {{ .Release.Namespace }}
 roleRef:
-  kind: Role
+  kind: ClusterRole
   name: {{ include "rancher-project-mapper.fullname" . }}
   apiGroup: rbac.authorization.k8s.io
