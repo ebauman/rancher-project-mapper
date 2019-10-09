@@ -42,7 +42,7 @@ questions:
     label: Type of the Service deployed
     group: "Service Settings"
   - variable: service.port
-    default: 443"
+    default: 443
     description: "Port of the Service deployed"
     type: int
     required: false
