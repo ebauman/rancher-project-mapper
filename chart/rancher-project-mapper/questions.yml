@@ -20,13 +20,6 @@ questions:
     required: false
     label: Image tag
     group: "Deployment Settings"
-  - variable: overrideChartNames
-    default: false
-    description: "Override Chart Names"
-    type: boolean
-    require: false
-    label: Override Chart Names
-    group: "Chart Settings"
   - variable: nameOverride
     default: ""
     description: "Override the name of the chart"
@@ -34,7 +27,6 @@ questions:
     required: false
     label: Chart name override
     group: "Chart Settings"
-    show_if: "overrideChartNames"
   - variable: fullNameOverride
     default: ""
     description: "Override the full name of the chart"
@@ -42,14 +34,6 @@ questions:
     required: false
     label: Full chart name override
     group: "Chart Settings"
-    show_if: "overrideChartNames"
-  - variable: overrideServiceSettings
-    default: false
-    descfiption: "Override Service Settings"
-    type: boolean
-    require: false
-    label: Override Service Settings
-    group: "Service Settings"
   - variable: service.type
     default: "ClusterIP"
     description: "Type of the Service deployed"
@@ -57,7 +41,6 @@ questions:
     required: false
     label: Type of the Service deployed
     group: "Service Settings"
-    show_if: overrideServiceSettings
   - variable: service.port
     default: 443"
     description: "Port of the Service deployed"
@@ -65,4 +48,3 @@ questions:
     required: false
     label: Port of the Service deployed
     group: "Service Settings"
-    show_if: overrideServiceSettings
