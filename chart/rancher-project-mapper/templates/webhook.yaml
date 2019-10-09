@@ -1,0 +1,1 @@
+{{ include "rancher-project-mapper.gen-certs" . }}

@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "rancher-project-mapper.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "rancher-project-mapper.name" . }}
+    helm.sh/chart: {{ include "rancher-project-mapper.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: https
+      protocol: TCP
+      name: https
+  selector:
+    app.kubernetes.io/name: {{ include "rancher-project-mapper.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
