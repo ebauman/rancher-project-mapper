@@ -82,7 +82,7 @@ func homeDir() string {
 	return os.Getenv("USERPROFILE") // windows
 }
 
-func buildInClusterConfig() (*rest.Config) {
+func buildInClusterConfig() *rest.Config {
 	config, err := rest.InClusterConfig()
 	if err != nil {
 		panic(err.Error())
@@ -90,7 +90,7 @@ func buildInClusterConfig() (*rest.Config) {
 	return config
 }
 
-func buildOutOfClusterConfig() (*rest.Config) {
+func buildOutOfClusterConfig() *rest.Config {
 	var kubeconfig *string
 	if home := homeDir(); home != "" {
 		kubeconfig = flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
@@ -104,17 +104,17 @@ func buildOutOfClusterConfig() (*rest.Config) {
 		panic(err.Error())
 	}
 
-	return config;
+	return config
 }
 
-func getNamespaceWatcherConfig(config *rest.Config) (*NamespaceWatcherConfig) {
+func getNamespaceWatcherConfig(config *rest.Config) *NamespaceWatcherConfig {
 	// create the clientset
 	clientset, err := kubernetes.NewForConfig(config)
 	if err != nil {
 		panic(err.Error())
 	}
 
-	cm, err := clientset.CoreV1().ConfigMaps("cattle-system").Get("rancher-namespace-watcher", metav1.GetOptions{})
+	cm, err := clientset.CoreV1().ConfigMaps("cattle-system").Get("rancher-project-mapper", metav1.GetOptions{})
 	if err != nil {
 		panic(err.Error())
 	}
@@ -127,13 +127,13 @@ func getNamespaceWatcherConfig(config *rest.Config) (*NamespaceWatcherConfig) {
 		panic(fmt.Sprintf("invalid configuration: %s", err.Error()))
 	}
 
-	return &nwConfig;
+	return &nwConfig
 }
 
 func main() {
 	var config Config
 	config.addFlags()
-	inCluster := flag.Bool("in-cluster", false, "True if running inside the cluster (default), false otherwise.")
+	inCluster := flag.Bool("in-cluster", true, "True if running inside the cluster (default), false otherwise.")
 	flag.Parse()
 
 	var restConfig *rest.Config
