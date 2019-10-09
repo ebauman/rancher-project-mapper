@@ -1,0 +1,22 @@
+questions:
+  - variable: replicaCount
+    default: 1
+    description: "How many replicas to deploy"
+    type: int
+    required: false
+    label: Deployment Replica Count
+    group: "Deployment Settings"
+  - variable: image.repository
+    default: "ebauman/rancher-project-mapper"
+    description: "Image repository"
+    type: string
+    required: false
+    label: Image repository
+    group: "Deployment Settings"
+  - variable: image.tag
+    default: "0.0.5"
+    description: "Image tag"
+    type: string
+    required: false
+    label: Image tag
+    group: "Deployment Settings"
