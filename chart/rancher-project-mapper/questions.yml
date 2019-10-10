@@ -56,7 +56,7 @@ questions:
     label: Image repository
     group: "Deployment Settings"
   - variable: image.tag
-    default: "0.0.6"
+    default: "0.1.0"
     description: "Image tag"
     type: string
     required: false
