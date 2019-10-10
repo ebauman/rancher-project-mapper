@@ -13,7 +13,7 @@ nameOverride: ""
 fullnameOverride: ""
 
 tls:
-  mouthpath: /certs
+  mountpath: /certs
   files:
     crt: /certs/tls.crt
     key: /cert/tls.key

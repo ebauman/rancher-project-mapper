@@ -5,8 +5,10 @@ map newly-created namespaces to Rancher projects based on regex rules.
 
 ## Important Notes
 
-After deploying this helm chart, you **must** create a `ConfigMap` in the `cattle-system`
-namespace. An example of this is here:
+After deploying this helm chart, you must create a `ConfigMap` with project mapper configuration.
+By default, this ConfigMap should exist in the `cattle-system` namespace, and have the name 
+`rancher-project-mapper`. Those values are overridable via chart configuration.
+An example of this is here:
 
 ```text
 apiVersion: v1
@@ -44,8 +46,15 @@ You may have as many rules as you'd like, as long as they follow the basic schem
 | `replicaCount` | Number of replicas for the deployment | `1` |
 | `image.repository` | Image repository | `ebauman/rancher-project-mapper` |
 | `image.tag` | Tag of the image to be deployed | `<version corresponding to helm chart version>` |
+| `image.pullPolicy` | Pull policy for the image | `IfNotPresent` |
 | `nameOverride` | Overridden name of the chart | `""` |
 | `fullNameOverride` | Overridden full name of the chart | `""` |
+| `tls.mountpath` | Path of the secret mount location | `/certs` |
+| `tls.files.crt` | Location of the `tls.crt` file  | `/certs/tls.crt` |
+| `tls.files.key` | Location of the `tls.key` file | `/certs/tls.key` |
+| `configmap.name` | Name of the ConfigMap holding project mapper configuration | `rancher-project-mapper` |
+| `configmap.namespace` | Namespace containing the ConfigMap | `cattle-system` |
+| `loglevel` | Log level of the application | `1` |
 | `service.type` | Type of the service deployed | `ClusterIP` | 
 | `service.port` | Port of the service deployed | `443` |
 | `resources` | Any resource requests | `{}` |
