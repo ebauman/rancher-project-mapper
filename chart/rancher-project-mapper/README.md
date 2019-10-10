@@ -5,9 +5,9 @@ map newly-created namespaces to Rancher projects based on regex rules.
 
 ## Important Notes
 
-After deploying this helm chart, you must create a `ConfigMap` with project mapper configuration.
-By default, this ConfigMap should exist in the `cattle-system` namespace, and have the name 
-`rancher-project-mapper`. Those values are overridable via chart configuration.
+After deploying this chart, a sample ConfigMap is created at the location
+specified in Values.yaml (keys `configmap.namespace` and `configmap.name`). In
+this ConfigMap is a sample configuration. 
 An example of this is here:
 
 ```text

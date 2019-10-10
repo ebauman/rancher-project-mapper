@@ -1,25 +1,8 @@
 The Rancher project mapper webhook should now be installed.
 
-** It is expected that the Deployment pod is in a CrashLoopBackOff. You will need to create a ConfigMap in the
-cattle-system namespace with the name `rancher-project-mapper`, and add your mapping rules. Here is an example:
+A ConfigMap has been created at the following namespace and name:
 
-apiVersion: v1
-kind: ConfigMap
-metadata:
-    name: rancher-project-mapper
-namespace: cattle-system
-data:
-    config: |-
-        {
-            "rules": [
-                {
-                    "regex": "namespace(s)?",
-                    "cluster": "c-12345",
-                    "project": "p-12345"
-                }
-            ]
-        }
+namespace: {{ .Values.configmap.namespace }}
+name: {{ .Values.configmap.name }}
 
-
-Once you have created this ConfigMap (** and anytime you make changes **), redeploy the deployment. This can be
-accomplished via Rancher, or by simply deleting the pod and letting the Deployment controller recreate it.
+In it, is a sample configuration. Please customize to your needs.
