@@ -13,6 +13,9 @@ This code here.
 Arguments:
 ```text
 --in-cluster            Whether the server is running in a cluster or not.
+-v                      Log level (klog)
+--namespace             Namespace containing the ConfigMap
+--config-map            Name of the ConfigMap
 --kubeconfig            Combined with --in-cluster=false, the location of kubeconfig.
 --tls-cert-file         File that contains the TLS certificate for this server. PEM format.
 --tls-private-key-file  File that contains the TLS key for this server. PEM format.
