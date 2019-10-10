@@ -1,8 +1,25 @@
 The Rancher project mapper webhook should now be installed.
 
-A ConfigMap has been created at the following namespace and name:
+You will need to create a ConfigMap at the location specified in Values.yaml:
 
 namespace: {{ .Values.configmap.namespace }}
 name: {{ .Values.configmap.name }}
 
-In it, is a sample configuration. Please customize to your needs.
+A sample is here:
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rancher-project-mapper
+  namespace: cattle-system
+data:
+  config: |-
+    {
+      "rules": [
+        {
+          "regex": "rancher-project-mapper-*",
+          "cluster": "c-12345",
+          "project": "p-12345"
+        }
+      ]
+    }

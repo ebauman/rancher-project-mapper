@@ -1,13 +1,12 @@
 # Rancher Project Mapper
 
-Rancher Project Mapper is a simple mutating webhook server that helps you automatically
-map newly-created namespaces to Rancher projects based on regex rules. 
+Rancher Project Mapper is a simple mutating webhook server that helps you automatically map newly-created namespaces to 
+Rancher projects based on regex rules. 
 
 ## Important Notes
 
-After deploying this chart, a sample ConfigMap is created at the location
-specified in Values.yaml (keys `configmap.namespace` and `configmap.name`). In
-this ConfigMap is a sample configuration. 
+After deploying this helm chart, you **must** create a ConfigMap in the location specified in Values.yaml
+(keys `configmap.namespace` and `configmap.name`). 
 An example of this is here:
 
 ```text
