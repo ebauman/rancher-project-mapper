@@ -20,7 +20,7 @@ questions:
   - variable: loglevel
     default: 1
     description: "Log level of the program"
-    tuype: int
+    type: int
     required: true
     group: "Rancher Project Mapper Configuration"
   - variable: configmap.name
