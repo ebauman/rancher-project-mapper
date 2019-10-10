@@ -1,4 +1,40 @@
 questions:
+  - variable: tls.mountpath
+    default: "/certs"
+    description: "Mount path for the TLS secret"
+    type: string
+    required: true
+    group: "Rancher Project Mapper Configuration"
+  - variable: tls.files.crt
+    default: "/certs/tls.crt"
+    description: "Mount path of the tls.crt file"
+    type: string
+    required: true
+    group: "Rancher Project Mapper Configuration"
+  - variable: tls.files.key
+    default: "/certs/tls.key"
+    description: "Mount path of the tls.key file"
+    type: string
+    required: true
+    group: "Rancher Project Mapper Configuration"
+  - variable: loglevel
+    default: 1
+    description: "Log level of the program"
+    tuype: int
+    required: true
+    group: "Rancher Project Mapper Configuration"
+  - variable: configmap.name
+    default: "rancher-project-mapper"
+    description: "Name of the ConfigMap holding Project Mapper configuration"
+    type: string
+    required: true
+    group: "Rancher Project Mapper Configuration"
+  - variable: configmap.namespace
+    default: "cattle-system"
+    description: "Namespace containing the ConfigMap"
+    type: string
+    required: true
+    group: "Rancher Project Mapper Configuration"
   - variable: replicaCount
     default: 1
     description: "How many replicas to deploy"

@@ -36,12 +36,23 @@ spec:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: RPM_NAMESPACE
+              value: "{{ .Values.configmap.namespace }}"
+            - name: RPM_CONFIGMAP
+              value: "{{ .Values.configmap.name }}"
+            - name: RPM_LOGLEVEL
+              value: "{{ .Values.loglevel }}"
+            - name: TLS_CERT_FILE
+              value: "{{ .Values.tls.files.crt }}"
+            - name: TLS_KEY_FILE
+              value: "{{ .Values.tls.files.key }}"
           ports:
             - name: https
               containerPort: 443
               protocol: TCP
           volumeMounts:
-            - mountPath: /certs
+            - mountPath: "{{ .Values.tls.mountpath }}"
               name: tls
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

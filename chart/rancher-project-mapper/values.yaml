@@ -6,11 +6,23 @@ replicaCount: 1
 
 image:
   repository: ebauman/rancher-project-mapper
-  tag: 0.0.5
+  tag: 0.0.6
   pullPolicy: IfNotPresent
 
 nameOverride: ""
 fullnameOverride: ""
+
+tls:
+  mouthpath: /certs
+  files:
+    crt: /certs/tls.crt
+    key: /cert/tls.key
+
+configmap:
+  name: rancher-project-mapper
+  namespace: cattle-system
+
+loglevel: 1
 
 service:
   type: ClusterIP
