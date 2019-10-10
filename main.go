@@ -82,15 +82,21 @@ func homeDir() string {
 	return os.Getenv("USERPROFILE") // windows
 }
 
-func buildInClusterConfig() *rest.Config {
+func buildInClusterConfig() *kubernetes.Clientset {
 	config, err := rest.InClusterConfig()
 	if err != nil {
 		panic(err.Error())
 	}
-	return config
+
+	clientset, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	return clientset
 }
 
-func buildOutOfClusterConfig() *rest.Config {
+func buildOutOfClusterConfig() *kubernetes.Clientset {
 	var kubeconfig *string
 	if home := homeDir(); home != "" {
 		kubeconfig = flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
@@ -104,49 +110,33 @@ func buildOutOfClusterConfig() *rest.Config {
 		panic(err.Error())
 	}
 
-	return config
-}
-
-func getNamespaceWatcherConfig(config *rest.Config) *NamespaceWatcherConfig {
-	// create the clientset
 	clientset, err := kubernetes.NewForConfig(config)
 	if err != nil {
 		panic(err.Error())
 	}
 
-	cm, err := clientset.CoreV1().ConfigMaps("cattle-system").Get("rancher-project-mapper", metav1.GetOptions{})
-	if err != nil {
-		panic(err.Error())
-	}
-
-	// pull out the config
-	rawConfig := []byte(cm.Data["config"])
-	nwConfig := NamespaceWatcherConfig{}
-
-	if err = json.Unmarshal(rawConfig, &nwConfig); err != nil {
-		panic(fmt.Sprintf("invalid configuration: %s", err.Error()))
-	}
-
-	return &nwConfig
+	return clientset
 }
 
 func main() {
 	var config Config
 	config.addFlags()
+	klog.InitFlags(nil)
 	inCluster := flag.Bool("in-cluster", true, "True if running inside the cluster (default), false otherwise.")
+	configNs := flag.String("namespace", "cattle-system", "Namespace in which the configuration ConfigMap resides")
+	configName := flag.String("config-map", "rancher-project-mapper", "Name of the ConfigMap")
 	flag.Parse()
 
-	var restConfig *rest.Config
+	var clientset *kubernetes.Clientset
 
 	if !*inCluster {
-		restConfig = buildOutOfClusterConfig()
+		clientset = buildOutOfClusterConfig()
 	} else {
-		restConfig = buildInClusterConfig()
+		clientset = buildInClusterConfig()
 	}
 
-	nwConfig := getNamespaceWatcherConfig(restConfig)
-
-	namespaceWatcher := NamespaceWatcher{config: *nwConfig}
+	namespaceWatcher := NamespaceWatcher{}
+	go namespaceWatcher.configWatcher(clientset, *configNs, *configName)
 
 	http.HandleFunc("/namespace", namespaceWatcher.serve)
 
