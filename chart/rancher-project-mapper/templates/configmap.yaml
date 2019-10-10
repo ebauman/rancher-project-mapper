@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.configmap.name }}
+  namespace: {{ .Values.configmap.namespace }}
+data:
+  config: |-
+    {
+      "rules": [
+        {
+          "regex": "rancher-project-mapper-*",
+          "cluster": "c-12345",
+          "project": "p-12345"
+        }
+      ]
+    }
