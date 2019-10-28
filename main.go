@@ -96,15 +96,7 @@ func buildInClusterConfig() *kubernetes.Clientset {
 	return clientset
 }
 
-func buildOutOfClusterConfig() *kubernetes.Clientset {
-	var kubeconfig *string
-	if home := homeDir(); home != "" {
-		kubeconfig = flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
-	} else {
-		kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
-	}
-	flag.Parse()
-
+func buildOutOfClusterConfig(kubeconfig *string) *kubernetes.Clientset {
 	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
 	if err != nil {
 		panic(err.Error())
@@ -122,15 +114,22 @@ func main() {
 	var config Config
 	config.addFlags()
 	klog.InitFlags(nil)
-	inCluster := flag.Bool("in-cluster", true, "True if running inside the cluster (default), false otherwise.")
+	var kubeconfig *string
+
+	if home := homeDir(); home != "" {
+		kubeconfig = flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
+	} else {
+		kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
+	}
+
 	configNs := flag.String("namespace", "cattle-system", "Namespace in which the configuration ConfigMap resides")
 	configName := flag.String("config-map", "rancher-project-mapper", "Name of the ConfigMap")
 	flag.Parse()
 
 	var clientset *kubernetes.Clientset
 
-	if !*inCluster {
-		clientset = buildOutOfClusterConfig()
+	if kubeconfig != nil {
+		clientset = buildOutOfClusterConfig(kubeconfig)
 	} else {
 		clientset = buildInClusterConfig()
 	}

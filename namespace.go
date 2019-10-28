@@ -105,26 +105,64 @@ func (nw *NamespaceWatcher) admitNamespace(ar v1beta1.AdmissionReview) *v1beta1.
 	}
 
 	reviewResponse := v1beta1.AdmissionResponse{}
-	reviewResponse.Allowed = true
-
-	// go through and attempt to match rules.
-	// if we find one, mutate
-	for i := 0; i < len(nw.config.Rules); i++ {
-		reg, err := regexp.Compile(nw.config.Rules[i].Regex)
+	// first, check rules if this is allowed
+	var creationRuleMatched = false
+	for i := 0; i < len(nw.config.Rules.Creation); i++ {
+		// loop each rule. If no match, then apply default
+		reg, err := regexp.Compile(nw.config.Rules.Creation[i].Regex)
 		if err != nil {
-			klog.Error("unable to compile regex for rule %s, regex was %s", i, nw.config.Rules[i].Regex)
+			klog.Error("unable to compile regex for creation rule %s, regex was %s", i, nw.config.Rules.Creation[i].Regex)
 			continue
 		}
 		matched := reg.Match([]byte(ns.Name))
 		if matched {
+			reviewResponse.Allowed = nw.config.Rules.Creation[i].Action == "allow" // deny would be false
+			creationRuleMatched = true
+		}
+	}
+
+	// if no rule was matched, apply the default
+	if !creationRuleMatched {
+		reviewResponse.Allowed = nw.config.Defaults.Creation != "deny" // default allow
+	}
+
+	// if this is not allowed, either via match or default, immediately return that
+	if !reviewResponse.Allowed {
+		reviewResponse.Result = &metav1.Status{
+			Message: "namespace creation denied by rancher-project-mapper",
+		}
+		return &reviewResponse
+	}
+
+	// go through and attempt to match rules.
+	// if we find one, mutate
+	var mappingRuleMatched = false
+	for i := 0; i < len(nw.config.Rules.Mapping); i++ {
+		reg, err := regexp.Compile(nw.config.Rules.Mapping[i].Regex)
+		if err != nil {
+			klog.Error("unable to compile regex for rule %s, regex was %s", i, nw.config.Rules.Mapping[i].Regex)
+			continue
+		}
+		matched := reg.Match([]byte(ns.Name))
+		if matched {
+			mappingRuleMatched = true
 			// we have found a regex match, terminate and mutate
-			patch := `[{"op": "add", "path": "/metadata/annotations", "value": {"field.cattle.io/projectId": "%s:%s"}}]`
-			reviewResponse.Patch = []byte(fmt.Sprintf(patch, nw.config.Rules[i].Cluster, nw.config.Rules[i].Project))
+			reviewResponse.Patch = nw.createPatch(nw.config.Rules.Mapping[i].Cluster, nw.config.Rules.Mapping[i].Project)
 			break
 		}
 	}
 
+	// if there was no rule matched, apply the default if it exists
+	if !mappingRuleMatched && nw.config.Defaults.Mapping.Project != "" && nw.config.Defaults.Mapping.Cluster != "" {
+		reviewResponse.Patch = nw.createPatch(nw.config.Defaults.Mapping.Cluster, nw.config.Defaults.Mapping.Project)
+	}
+
 	return &reviewResponse
+}
+
+func (nw *NamespaceWatcher) createPatch(clusterId string, projectId string) []byte {
+	patch := `[{"op": "add", "path": "/metadata/annotations", "value": {"field.cattle.io/projectId": "%s:%s"}}]`
+	return []byte(fmt.Sprintf(patch, clusterId, projectId))
 }
 
 func (nw *NamespaceWatcher) serve(w http.ResponseWriter, r *http.Request) {

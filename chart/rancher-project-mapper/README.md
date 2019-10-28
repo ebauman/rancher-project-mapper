@@ -1,7 +1,7 @@
 # Rancher Project Mapper
 
 Rancher Project Mapper is a simple mutating webhook server that helps you automatically map newly-created namespaces to 
-Rancher projects based on regex rules. 
+Rancher projects based on regex rules. It also allows you to configure regex rules to deny (or allow) creation of namespaces.
 
 ## Important Notes
 
@@ -18,23 +18,47 @@ metadata:
 data:
   config: |-
     {
-        "rules": [
-            {
-                "regex": "rpm-*",
-                "cluster": "c-4mdbz",
-                "project": "p-48p5n"
-            }
+      "defaults": {
+        "mapping": {
+          "cluster": "c-12345", // optional
+          "project": "p-12345" // optional
+        },
+        "creation": "allow" // optional, default allow
+      },
+      "rules": {
+        "mapping": [
+        {
+          "regex": "rpm-*",
+          "cluster": "c-12345",
+          "project": "p-12345"
+        }
+        ],
+        "creation": [
+        {
+          "regex": "mpr-*",
+          "action": "deny"
+        }
         ]
+      }
     }
 ```
 
-You may have as many rules as you'd like, as long as they follow the basic scheme:
+You may have as many mapping rules as you'd like, as long as they follow the basic scheme:
 
 ```text
 {
     "regex": "<valid regex>",
     "cluster": "<cluster id, e.g. c-12345>",
     "project": "<project id, e.g. p-12345>"
+}
+```
+
+You may have as many creation rules as you'd like, as long as they follow the basic scheme:
+
+```text
+{
+    "regex": "<valid regex>",
+    "action": <"allow" || "deny">
 }
 ```
 
