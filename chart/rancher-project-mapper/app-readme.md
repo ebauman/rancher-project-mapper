@@ -1,2 +1,2 @@
 Rancher Project Mapper is a simple mutating webhook server that helps you automatically
-map newly-created namespaces to Rancher projects based on regex rules. 
+map newly-created namespaces to Rancher projects based on regex rules. It also helps you allow or deny creation of namespaces based on regex rules.

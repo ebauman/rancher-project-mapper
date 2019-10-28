@@ -1,7 +1,7 @@
 # Rancher Project Mapper
 
 A mutating webhook server that adds a project annotation to a namespace depending on regex rules.
-
+It also helps you allow or deny creation of namespaces based on regex rules.
 ## Components
 
 ### Webhook Server
