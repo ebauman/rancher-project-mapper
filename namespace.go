@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"k8s.io/api/admission/v1beta1"
@@ -19,9 +20,9 @@ type NamespaceWatcher struct {
 	config NamespaceWatcherConfig
 }
 
-func (nw *NamespaceWatcher) configWatcher(clientset *kubernetes.Clientset, namespace string, cmName string) {
+func (nw *NamespaceWatcher) configWatcher(ctx context.Context, clientset *kubernetes.Clientset, namespace string, cmName string) {
 	// first try to get the config
-	cm, err := clientset.CoreV1().ConfigMaps(namespace).Get(cmName, metav1.GetOptions{})
+	cm, err := clientset.CoreV1().ConfigMaps(namespace).Get(ctx, cmName, metav1.GetOptions{})
 	if err != nil {
 		// namespace might not exist, just log it
 		klog.Error(fmt.Sprintf("error getting configmap %s: %s", cmName, err))
@@ -34,7 +35,7 @@ func (nw *NamespaceWatcher) configWatcher(clientset *kubernetes.Clientset, names
 		nw.config = *config
 	}
 
-	watcher, err := clientset.CoreV1().ConfigMaps(namespace).Watch(metav1.ListOptions{})
+	watcher, err := clientset.CoreV1().ConfigMaps(namespace).Watch(ctx, metav1.ListOptions{})
 	if err != nil {
 		log.Fatal(err.Error())
 	}

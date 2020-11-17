@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -134,8 +135,10 @@ func main() {
 		clientset = buildInClusterConfig()
 	}
 
+	ctx := context.Background()
+
 	namespaceWatcher := NamespaceWatcher{}
-	go namespaceWatcher.configWatcher(clientset, *configNs, *configName)
+	go namespaceWatcher.configWatcher(ctx, clientset, *configNs, *configName)
 
 	http.HandleFunc("/namespace", namespaceWatcher.serve)
 
